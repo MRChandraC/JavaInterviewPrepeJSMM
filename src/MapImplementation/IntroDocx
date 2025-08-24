@@ -1,0 +1,49 @@
+package Java;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class MapImplementationsDemo {
+    public static void main(String[] args) {
+
+        // 1️⃣ HashMap - No ordering, allows 1 null key & multiple null values
+        Map<Integer, String> hashMap = new HashMap<>();
+        hashMap.put(3, "Apple");
+        hashMap.put(1, "Banana");
+        hashMap.put(2, null);
+        hashMap.put(null, "Mango"); // only 1 null key allowed
+        System.out.println("HashMap (no order): " + hashMap);
+
+        // 2️⃣ LinkedHashMap - Maintains insertion order
+        Map<Integer, String> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put(3, "Apple");
+        linkedHashMap.put(1, "Banana");
+        linkedHashMap.put(2, "Mango");
+        linkedHashMap.put(4, null);
+        System.out.println("LinkedHashMap (insertion order): " + linkedHashMap);
+
+        // 3️⃣ TreeMap - Sorts keys in natural order, no null key allowed
+        Map<Integer, String> treeMap = new TreeMap<>();
+        treeMap.put(3, "Apple");
+        treeMap.put(1, "Banana");
+        treeMap.put(2, "Mango");
+        treeMap.put(4, "Orange");
+        System.out.println("TreeMap (sorted by keys): " + treeMap);
+
+        // 4️⃣ Hashtable - Legacy, thread-safe, no null key or null value
+        Map<Integer, String> hashtable = new Hashtable<>();
+        hashtable.put(3, "Apple");
+        hashtable.put(1, "Banana");
+        hashtable.put(2, "Mango");
+        hashtable.put(4, "Orange");
+        System.out.println("Hashtable (thread-safe, no nulls): " + hashtable);
+
+        // 5️⃣ ConcurrentHashMap - Thread-safe, high performance
+        Map<Integer, String> concurrentMap = new ConcurrentHashMap<>();
+        concurrentMap.put(3, "Apple");
+        concurrentMap.put(1, "Banana");
+        concurrentMap.put(2, "Mango");
+        concurrentMap.put(4, "Orange");
+        System.out.println("ConcurrentHashMap (thread-safe): " + concurrentMap);
+    }
+}

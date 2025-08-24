@@ -1,0 +1,70 @@
+🔹 Java 8 Stream API – Commonly Used Methods
+
+ Stream API works on Collections, Arrays, or any data source.
+ Operations are Lazy (nothing executes until a terminal operation is called).
+
+1️⃣ Intermediate Operations (return a new Stream → chainable)
+----------------------------------------------------------------
+Method                  Description                                Example
+filter(Predicate<T>)    Filters elements based on a condition       list.stream().filter(n -> n > 10)
+map(Function<T,R>)      Transforms each element                     list.stream().map(n -> n * 2)
+flatMap(Function<T,Stream<R>>) Flattens nested streams              listOfLists.stream().flatMap(List::stream)
+distinct()              Removes duplicates (uses equals())          list.stream().distinct()
+sorted()                Sorts elements (natural order)              list.stream().sorted()
+sorted(Comparator)      Sorts with custom comparator                list.stream().sorted((a,b) -> b-a)
+peek(Consumer<T>)       Debug/log elements without modifying stream stream.peek(System.out::println)
+limit(long n)           Gets first n elements                       list.stream().limit(5)
+skip(long n)            Skips first n elements                      list.stream().skip(5)
+mapToInt(ToIntFunction) Converts to IntStream                       list.stream().mapToInt(String::length)
+mapToDouble(ToDoubleFunction) Converts to DoubleStream              list.stream().mapToDouble(Math::sqrt)
+mapToLong(ToLongFunction) Converts to LongStream                    list.stream().mapToLong(Long::valueOf)
+flatMapToInt/Long/Double Flatten into primitive streams             list.stream().flatMapToInt(Arrays::stream)
+
+
+2️⃣ Terminal Operations (produce result → stream is consumed)
+----------------------------------------------------------------
+Method                  Description                                Example
+forEach(Consumer)       Iterates over elements                      list.stream().forEach(System.out::println)
+toArray()               Converts stream to array                    list.stream().toArray()
+collect(Collector)      Collects into List/Set/Map                  list.stream().collect(Collectors.toList())
+reduce()                Reduces elements into a single value        list.stream().reduce(0, (a,b) -> a+b)
+min(Comparator)         Finds minimum                               list.stream().min(Integer::compare)
+max(Comparator)         Finds maximum                               list.stream().max(Integer::compare)
+count()                 Counts elements                             list.stream().count()
+anyMatch(Predicate)     Returns true if any element matches         list.stream().anyMatch(n -> n > 10)
+allMatch(Predicate)     Returns true if all elements match          list.stream().allMatch(n -> n > 10)
+noneMatch(Predicate)    Returns true if no element matches          list.stream().noneMatch(n -> n > 10)
+findFirst()             Returns first element (Optional)            list.stream().findFirst()
+findAny()               Returns any element (Optional)              list.stream().findAny()
+
+
+3️⃣ Short-Circuiting Operations
+----------------------------------------------------------------
+(They stop processing once the result is known)
+
+- limit(n)
+- findFirst()
+- findAny()
+- anyMatch()
+- allMatch()
+- noneMatch()
+
+
+4️⃣ Collectors (used with collect())
+----------------------------------------------------------------
+Collector                        Description
+Collectors.toList()              Collects into List
+Collectors.toSet()               Collects into Set
+Collectors.toMap()               Collects into Map
+Collectors.joining(", ")         Concatenates strings
+Collectors.counting()            Counts elements
+Collectors.summingInt()          Sum of integers
+Collectors.averagingInt()        Average
+Collectors.groupingBy()          Groups elements by classifier
+Collectors.partitioningBy()      Splits elements into 2 groups (true/false)
+
+
+5️⃣ Primitive Streams
+----------------------------------------------------------------
+IntStream, LongStream, DoubleStream → optimized for primitives.
+Methods: sum(), average(), range(), rangeClosed(), etc.

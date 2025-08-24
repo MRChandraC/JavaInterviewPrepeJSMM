@@ -1,0 +1,47 @@
+With relational databases, the information you want is often stored in several tables.
+ In such scenarios, you’ll need to join these tables.
+ This is where the JOIN comes into play.
+ The JOIN clause in SQL is used to combine rows from several tables based on a related column between these tables.
+
+
+
+JOINS: INNER JOIN(JOIN),LEFT JOIN,RIGHT JOIN,FULL JOIN
+
+-- ===========================
+-- SQL JOINs – Quick Reference
+-- ===========================
+
+-- 1. INNER JOIN (JOIN)
+-- Returns only matched records from both tables
+SELECT b.id, b.title, a.first_name, a.last_name
+FROM books b
+INNER JOIN authors a ON b.author_id = a.id;
+
+-- 2. LEFT JOIN
+-- Returns all rows from left table, matched rows from right table
+-- Unmatched rows from right → NULL
+SELECT b.id, b.title, t.last_name AS translator
+FROM books b
+LEFT JOIN translators t ON b.translator_id = t.id;
+
+-- 3. RIGHT JOIN
+-- Returns all rows from right table, matched rows from left table
+-- Unmatched rows from left → NULL
+SELECT b.id, b.title, e.last_name AS editor
+FROM books b
+RIGHT JOIN editors e ON b.editor_id = e.id;
+
+-- 4. FULL JOIN
+-- Returns all rows from both tables
+-- Unmatched rows on either side → NULL
+SELECT b.id, b.title, e.last_name AS editor
+FROM books b
+FULL JOIN editors e ON b.editor_id = e.id;
+
+-- ===========================
+-- SUMMARY
+-- INNER JOIN → only matches
+-- LEFT JOIN  → all left + matches
+-- RIGHT JOIN → all right + matches
+-- FULL JOIN  → all rows (both sides)
+-- ===========================

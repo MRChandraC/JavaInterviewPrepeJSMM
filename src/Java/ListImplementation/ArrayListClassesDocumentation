@@ -1,0 +1,29 @@
+ArrayList → backed by a resizable array (fast random access).
+LinkedList → backed by singly linked nodes (good for sequential access, frequent inserts/deletes).
+Doubly LinkedList → enhanced linked list with prev & next (bidirectional operations).
+
+But in Java’s Collections Framework, there are a few more important List-related classes/interfaces you might still want to touch:
+
+Vector
+
+Legacy class (synchronized version of ArrayList).
+
+Rarely used now, replaced by ArrayList + Collections.synchronizedList().
+
+Stack (extends Vector)
+
+Legacy stack implementation (LIFO).
+
+Now we prefer Deque (ArrayDeque) for stack-like operations.
+
+CopyOnWriteArrayList (from java.util.concurrent)
+
+Thread-safe version of ArrayList.
+
+Used in multi-threaded environments where reads are frequent and writes are rare.
+
+ So, if you’re preparing for interviews:
+
+Cover ArrayList, LinkedList, Vector, Stack, CopyOnWriteArrayList under List Implementations.
+
+Also know Set implementations (HashSet, LinkedHashSet, TreeSet) and Map implementations (HashMap, LinkedHashMap, TreeMap, Hashtable).
