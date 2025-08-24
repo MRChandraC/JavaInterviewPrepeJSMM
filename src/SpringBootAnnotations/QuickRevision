@@ -1,0 +1,96 @@
+// =====================================================
+// SPRING BOOT ANNOTATIONS REFERENCE (All Layers Inline)
+// =====================================================
+
+/* ====================== CONTROLLER LAYER ====================== */
+@RestController   // Marks class as REST controller, returns JSON/XML by default
+@RequestMapping("/api/users")  // Base path for all endpoints
+public class UserController {
+
+    @Autowired   // Injects Service bean
+    private UserService userService;
+
+    @GetMapping("/{id}")   // Handles HTTP GET request
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PostMapping   // Handles HTTP POST request
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        return ResponseEntity.ok(userService.saveUser(user));
+    }
+
+    @ExceptionHandler(Exception.class)  // Handles exceptions inside controller
+    public ResponseEntity<String> handleError(Exception e) {
+        return ResponseEntity.status(500).body("Error: " + e.getMessage());
+    }
+}
+
+/* ====================== SERVICE LAYER ====================== */
+@Service   // Marks as service bean (business logic)
+@Transactional   // Ensures DB operations are atomic
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+}
+
+/* ====================== MODEL LAYER ====================== */
+@Entity   // Marks class as JPA entity mapped to DB table
+@Table(name = "users")   // Custom table name
+public class User {
+
+    @Id   // Primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto increment
+    private Long id;
+
+    @Column(nullable = false, unique = true)  // DB column with constraints
+    private String email;
+
+    @Column(nullable = false)
+    private String name;
+
+    // Relationships
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // One user -> many orders
+    private List<Order> orders;
+}
+
+@Entity
+@Table(name = "orders")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne   // Many orders -> one user
+    @JoinColumn(name = "user_id")
+    private User user;
+}
+
+/* ====================== REPOSITORY LAYER ====================== */
+@Repository   // Marks as DAO component (optional, JpaRepository already registers)
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Spring Data JPA creates queries automatically from method names
+    Optional<User> findByEmail(String email);
+}
+
+/* ====================== CONFIGURATION LAYER ====================== */
+@Configuration   // Marks class as Spring configuration
+@EnableCaching   // Enables Spring caching mechanism
+public class AppConfig {
+
+    @Bean   // Defines a custom bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();  // Used for DTO <-> Entity mapping
+    }
+}
+
