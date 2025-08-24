@@ -1,0 +1,91 @@
+//difference between Shallow Copy vs Deep Copy
+ /* Shallow Copy
+
+Definition: Copies only the object itself, but not the objects it refers to.
+References inside the object are shared (point to the same memory).
+If one changes the referenced object → it affects both copies.
+Done using Object.clone() (default behavior).
+
+Deep Copy
+Definition: Copies not only the object but also the objects it refers to.
+Creates completely independent cloned objects.
+No shared references → changes in one object won’t affect the other.
+Needs manual implementation inside clone().
+
+Example: Document with nested Author object
+*/
+
+// Class representing Address (used inside Employee)
+class Address implements Cloneable {
+    String city;
+    String state;
+
+    public Address(String city, String state) {
+        this.city = city;
+        this.state = state;
+    }
+
+    // Shallow clone
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();  // Just copies reference
+    }
+
+    @Override
+    public String toString() {
+        return city + ", " + state;
+    }
+}
+
+// Employee contains Address object (Nested Object)
+class Employee implements Cloneable {
+    String name;
+    Address address; // Reference type field
+
+    public Employee(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    // Shallow Copy (default clone)
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();  // Only top-level object copied
+    }
+
+    // Deep Copy (custom implementation)
+    protected Employee deepClone() throws CloneNotSupportedException {
+        Employee cloned = (Employee) super.clone();
+        cloned.address = (Address) address.clone(); // clone nested object too
+        return cloned;
+    }
+
+    @Override
+    public String toString() {
+        return name + " lives in " + address;
+    }
+}
+
+public class ShallowVsDeepCopy {
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Address addr = new Address("Hyderabad", "Telangana");
+        Employee emp1 = new Employee("Chandra", addr);
+
+        // Shallow Copy
+        Employee shallowCopy = (Employee) emp1.clone();
+
+        // Deep Copy
+        Employee deepCopy = emp1.deepClone();
+
+        System.out.println("Original:    " + emp1);
+        System.out.println("ShallowCopy: " + shallowCopy);
+        System.out.println("DeepCopy:    " + deepCopy);
+
+        System.out.println("\n-- Changing Address city to Bangalore --");
+        emp1.address.city = "Bangalore"; // Change in nested object
+
+        System.out.println("Original:    " + emp1);
+        System.out.println("ShallowCopy: " + shallowCopy);
+        System.out.println("DeepCopy:    " + deepCopy);
+    }
+}
