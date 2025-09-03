@@ -1,0 +1,184 @@
+Step 1: Add Dependencies (pom.xml)
+<dependencies>
+    <!-- Spring Boot Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- GraphQL Starter for Spring Boot -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-graphql</artifactId>
+    </dependency>
+
+    <!-- Optional: Web (if you also want REST endpoints) -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+
+
+👉 This adds Spring Boot and Spring for GraphQL.
+GraphQL endpoint will be available at /graphql by default.
+
+🔹 Step 2: Define Schema (src/main/resources/graphql/schema.graphqls)
+# GraphQL Type Definition for User
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+# Queries (READ operations)
+type Query {
+    users: [User]          # Fetch all users
+    userById(id: ID!): User # Fetch a single user by ID
+}
+
+# Mutations (WRITE operations)
+type Mutation {
+    addUser(name: String!, email: String!): User  # Add a new user
+}
+
+
+👉 GraphQL schema defines what clients can ask for.
+
+Query = read operations
+
+Mutation = write operations
+
+🔹 Step 3: Create Model (User.java)
+package com.example.graphql.model;
+
+public class User {
+    private String id;
+    private String name;
+    private String email;
+
+    // Constructor
+    public User(String id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    // Getters (required for GraphQL to return fields)
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+}
+
+
+👉 A simple POJO (Plain Old Java Object).
+GraphQL automatically maps schema fields (id, name, email) to these getters.
+
+🔹 Step 4: Create GraphQL Controller (UserController.java)
+package com.example.graphql.controller;
+
+import com.example.graphql.model.User;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller  // Marks this as a GraphQL Controller
+public class UserController {
+
+    // In-memory list to act as database
+    private final List<User> users = new ArrayList<>();
+
+    // Constructor to pre-load some data
+    public UserController() {
+        users.add(new User("1", "Chandra", "chandra@test.com"));
+        users.add(new User("2", "John", "john@test.com"));
+    }
+
+    // ------------------------
+    // QUERY: Fetch all users
+    // ------------------------
+    @QueryMapping
+    public List<User> users() {
+        return users;
+    }
+
+    // ------------------------
+    // QUERY: Fetch user by ID
+    // ------------------------
+    @QueryMapping
+    public User userById(@Argument String id) {
+        return users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    // ------------------------
+    // MUTATION: Add new user
+    // ------------------------
+    @MutationMapping
+    public User addUser(@Argument String name, @Argument String email) {
+        User newUser = new User(String.valueOf(users.size() + 1), name, email);
+        users.add(newUser);
+        return newUser;
+    }
+}
+
+
+👉 Notes:
+
+@QueryMapping → Maps schema Query → Java method
+
+@MutationMapping → Maps schema Mutation → Java method
+
+@Argument → Binds GraphQL arguments (id, name, email) to Java parameters
+
+🔹 Step 5: Run Application
+mvn spring-boot:run
+
+
+By default, GraphQL endpoint runs at:
+👉 http://localhost:8080/graphql
+
+🔹 Step 6: Test Queries & Mutations
+✅ Query: Get All Users
+{
+  users {
+    id
+    name
+    email
+  }
+}
+
+✅ Query: Get User By ID
+{
+  userById(id: "1") {
+    id
+    name
+  }
+}
+
+✅ Mutation: Add User
+mutation {
+  addUser(name: "Alice", email: "alice@test.com") {
+    id
+    name
+    email
+  }
+}
+
+🔹 Step 7: Summary (for Interview)
+
+Add Spring Boot GraphQL Starter dependency.
+
+Define schema in schema.graphqls.
+
+Create model classes (POJOs).
+
+Create resolvers using @QueryMapping & @MutationMapping.
+
+Start app → GraphQL runs on /graphql.
